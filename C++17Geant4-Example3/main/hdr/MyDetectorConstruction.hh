@@ -27,59 +27,24 @@ public:
 private:
 	G4ThreeVector halfLabSize;
 	std::unique_ptr<G4Box> solidLab {nullptr};
-	std::unique_ptr<G4Box> solidBox {nullptr};
 	std::unique_ptr<G4Trd> solidTrapezoid {nullptr};
 	std::unique_ptr<G4Sphere> solidSphere {nullptr};
-//	G4Box *solidLab = nullptr;
-//	G4Trd *solidTrapezoid = nullptr;
-//	G4Sphere *solidSphere = nullptr;
 
 	std::unique_ptr<G4LogicalVolume> logicalLab {nullptr};
-	std::unique_ptr<G4LogicalVolume> logicalBox {nullptr};
 	std::unique_ptr<G4LogicalVolume> logicalTrapezoid {nullptr};
 	std::unique_ptr<G4LogicalVolume> logicalSphere {nullptr};
-//	G4LogicalVolume *logicalLab = nullptr;
-//	G4LogicalVolume *logicalTrapezoid = nullptr;
-//	G4LogicalVolume *logicalSphere = nullptr;
 
 	std::unique_ptr<G4VPhysicalVolume> physicalLab {nullptr};
-	std::unique_ptr<G4VPhysicalVolume> physicalBox {nullptr};
 	std::unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
 	std::unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
-//	G4VPhysicalVolume *physicalLab = nullptr;
-//	G4VPhysicalVolume *physicalTrapezoid = nullptr;
-//	G4VPhysicalVolume *physicalSphere = nullptr;
 
 	G4Material *labMaterial = nullptr;
-	G4Material *boxMaterial = nullptr;
-	G4Material *trapezoidMaterial = nullptr;
+//	G4Material *trapezoidMaterial = nullptr;
+	std::unique_ptr<G4Material> trapezoidMaterial {nullptr};
 	G4Material *sphereMaterial = nullptr;
 
 	void DefineMaterials();
 	G4VPhysicalVolume* ConstructDetector();
 };
-
-//	std::unique_ptr<G4Box> solidLab {nullptr};
-////	std::unique_ptr<G4Trd> solidTrapezoid {nullptr};
-//	G4Trd *solidTrapezoid = nullptr;
-//	std::unique_ptr<G4Sphere> solidSphere {nullptr};
-//
-//	std::unique_ptr<G4LogicalVolume> logicalLab {nullptr};
-//	std::unique_ptr<G4LogicalVolume> logicalTrapezoid {nullptr};
-//	G4LogicalVolume *logicalTrapezoid = nullptr;
-//	std::unique_ptr<G4LogicalVolume> logicalSphere {nullptr};
-//
-//	std::unique_ptr<G4VPhysicalVolume> physicalLab {nullptr};
-//	std::unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
-//	G4VPhysicalVolume *physicalTrapezoid = nullptr;
-//
-////	std::unique_ptr<G4Material> labMaterial {nullptr};
-//	G4Material *labMaterial {nullptr}; // smart pointer not required since no new invoked
-//	G4Material *trapezoidMaterial {nullptr};
-//	G4Material *sphereMaterial {nullptr};
-//
-//	void DefineMaterials();
-//	G4VPhysicalVolume* ConstructDetector();
-//};
 
 #endif /* HDR_MYDETECTORCONSTRUCTION_HH_ */
