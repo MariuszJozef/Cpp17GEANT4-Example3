@@ -7,6 +7,7 @@
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
+class G4VisAttributes;
 
 #include "G4Box.hh"
 #include "G4Trd.hh"
@@ -15,6 +16,7 @@ class G4Material;
 #include "G4PhysicalConstants.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+//#include "G4VisAttributes.hh"
 
 class MyDetectorConstruction: public G4VUserDetectorConstruction
 {
@@ -23,6 +25,7 @@ public:
 	virtual ~MyDetectorConstruction();
 	virtual G4VPhysicalVolume* Construct() override;
 	G4ThreeVector GetHalfLabSize() const { return halfLabSize; }
+
 
 private:
 	G4ThreeVector halfLabSize;
@@ -38,13 +41,20 @@ private:
 	std::unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
 	std::unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
 
-	G4Material *labMaterial = nullptr;
+	G4Material *labMaterial = {nullptr};
 //	G4Material *trapezoidMaterial = nullptr;
 	std::unique_ptr<G4Material> trapezoidMaterial {nullptr};
-	G4Material *sphereMaterial = nullptr;
+	G4Material *sphereMaterial {nullptr};
 
+	enum class Colour { yellow, orange, brown, cyan, magenta, invisible };
+	Colour colour { Colour::yellow };
+	enum class Texture { wireframe, solid };
+	Texture texture { Texture::solid };
+
+private:
 	void DefineMaterials();
 	G4VPhysicalVolume* ConstructDetector();
+	std::unique_ptr<G4VisAttributes> ChooseColour(Colour colour, Texture texture);
 };
 
 #endif /* HDR_MYDETECTORCONSTRUCTION_HH_ */

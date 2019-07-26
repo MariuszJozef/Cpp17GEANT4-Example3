@@ -51,37 +51,71 @@ void MyDetectorConstruction::DefineMaterials()
 	sphereMaterial = G4H2Oliquid;
 }
 
+std::unique_ptr<G4VisAttributes> MyDetectorConstruction::
+						ChooseColour(Colour colour, Texture texture = Texture::solid)
+{
+	G4double opacity {0.4};
+	G4bool isVisible {true};
+	std::unique_ptr<G4VisAttributes> chosenColour;
+
+	switch (colour)
+	{
+		case Colour::yellow:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 0, opacity));
+			break;
+		}
+		case Colour::orange:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 0.65, 0, opacity));
+			break;
+		}
+		case Colour::brown:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>
+								(G4Colour(0.545, 0.271, 0.075, opacity));
+			break;
+		}
+		case Colour::cyan:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(0, 1, 1, opacity));
+			break;
+		}
+		case Colour::magenta:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 0, 1, opacity));
+			break;
+		}
+		case Colour::invisible:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 1, opacity));
+			isVisible = false;
+			break;
+		}
+		default:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 1, opacity));
+			break;
+		}
+	}
+
+	switch (texture)
+	{
+	case Texture::wireframe:
+		chosenColour->SetForceWireframe(true);
+		break;
+	case Texture::solid:
+		chosenColour->SetForceSolid(true);
+		break;
+	}
+
+	chosenColour->SetVisibility(isVisible);
+	return chosenColour;
+}
+
 G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 {
 	G4bool checkOverlaps {true};
-	G4double opacity {0.4};
-
-	G4VisAttributes* invisible = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
-	invisible->SetVisibility(false);
-
-	G4VisAttributes *orange = new G4VisAttributes(G4Colour(1, 0.65, 0, opacity));
-	orange->SetVisibility(true);
-	orange->SetForceWireframe(true); // Whichever is last overwrites the previous one!
-	orange->SetForceSolid(true);     // Whichever is last overwrites the previous one!
-
-	G4VisAttributes *yellow = new G4VisAttributes(G4Colour(1, 1, 0, opacity));
-	yellow->SetVisibility(true);
-	yellow->SetForceWireframe(true);
-	yellow->SetForceSolid(true);
-
-	G4VisAttributes *cyan = new G4VisAttributes(G4Colour(0, 1, 1, opacity));
-	cyan->SetVisibility(true);
-	cyan->SetForceSolid(true);
-
-	G4VisAttributes *magenta = new G4VisAttributes(G4Colour(1, 0, 1, opacity));
-	magenta->SetVisibility(true);
-	magenta->SetForceSolid(true);
-
-	G4VisAttributes *brown = new G4VisAttributes(
-			G4Colour(0.545, 0.271, 0.075, opacity));
-//			G4Colour(139.0/255.0, 69.0/255.0, 19.0/255.0, opacity));
-	magenta->SetVisibility(true);
-	magenta->SetForceSolid(true);
 
 	solidLab = std::make_unique<G4Box>("Lab",
 					halfLabSize.x(), halfLabSize.y(), halfLabSize.z());
@@ -100,6 +134,8 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 					false,           //no boolean operation
 					0); 	         //copy number};
 
+//	logicalLab->SetVisAttributes(ChooseColour(Colour::invisible).release());
+
 
 	G4double halfLengthX1 {8*cm}, halfLengthX2 {5*cm};
 	G4double halfLengthY1 {6*cm}, halfLengthY2 {4*cm};
@@ -111,11 +147,12 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 						halfLengthZ);
 
 	logicalTrapezoid = std::make_unique<G4LogicalVolume>
-						(solidTrapezoid.get(), //raw pointer
-						trapezoidMaterial.get(),	   //raw pointer
+						(solidTrapezoid.get(), 		//raw pointer
+						trapezoidMaterial.get(),    //raw pointer
 						"Trapezoid");
 
-//	This constructor uses physical mother volume
+//	Various G4PVPlacement constructors are available, e.g.
+//	1. This constructor uses physical mother volume:
 //	physicalTrapezoid = std::make_unique<G4PVPlacement>
 //						(nullptr,				// no rotation
 //						G4ThreeVector(), 		// at (x,y,z)
@@ -126,7 +163,7 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 //						0,               		// copy number
 //						checkOverlaps); 		// checking overlaps
 
-//	This constructor uses logical mother volume
+//	2. This constructor uses logical mother volume:
 	physicalTrapezoid = std::make_unique<G4PVPlacement>
 						(nullptr,				// no rotation
 						G4ThreeVector(), 		// at (0, 0, 0)
@@ -137,7 +174,9 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 						0,               		// copy number
 						checkOverlaps); 		// checking overlaps
 
-	logicalTrapezoid->SetVisAttributes(yellow);
+//	The SetVisAttributes method accepts a raw pointer and takes ownership of it,
+//	hence must .release() the uniquie_ptr returned by ChooseColour
+	logicalTrapezoid->SetVisAttributes(ChooseColour(Colour::yellow).release());
 
 
 	solidSphere = std::make_unique<G4Sphere>
@@ -154,7 +193,8 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 						sphereMaterial,
 						"Sphere");
 
-//	This constructor uses physical mother volume
+//	Various G4PVPlacement constructors are available, e.g.
+//	1. This constructor uses physical mother volume:
 //	physicalSphere = std::make_unique<G4PVPlacement>
 //						(nullptr,               // no rotation
 //						G4ThreeVector(), 		// at (0, 0, 0)
@@ -165,10 +205,10 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 //						0,               		// copy number
 //						checkOverlaps); 		// checking overlaps
 
-//	This constructor uses logical mother volume
+//	2. This constructor uses logical mother volume:
 	physicalSphere = std::make_unique<G4PVPlacement>
 						(nullptr,               // no rotation
-						G4ThreeVector(), 		// at (0, 0, 0)
+						G4ThreeVector(),		// at (0, 0, 0)
 						logicalSphere.get(), 	// its logical volume
 						"Sphere",      			// its name
 						logicalTrapezoid.get(), // logical mother volume
@@ -176,7 +216,9 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 						0,               		// copy number
 						checkOverlaps); 		// checking overlaps
 
-	logicalSphere->SetVisAttributes(orange);
+//	The SetVisAttributes method accepts a raw pointer and takes ownership of it,
+//	hence must .release() the uniquie_ptr returned by ChooseColour
+	logicalSphere->SetVisAttributes(ChooseColour(Colour::orange, Texture::solid).release());
 
 	return physicalLab.get();
 }
