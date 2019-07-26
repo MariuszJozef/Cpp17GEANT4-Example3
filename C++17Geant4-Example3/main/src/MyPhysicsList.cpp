@@ -1,24 +1,35 @@
 #include "MyPhysicsList.hh"
+//#include "MyPhysicsListEM.hh"
 #include "G4ParticleTypes.hh"
 
-MyPhysicsList::MyPhysicsList() {}
+MyPhysicsList::MyPhysicsList()
+: G4VModularPhysicsList()
+//  myPhysicsListEM(0)
+{
+//	myPhysicsListEM = new MyPhysicsListEM();
+	SetCutsWithDefault();
+	SetVerboseLevel(0);
+}
 
 MyPhysicsList::~MyPhysicsList() {}
 
 void MyPhysicsList::ConstructParticle()
 {
-	G4Geantino::GeantinoDefinition();
 	G4Gamma::GammaDefinition();
 	G4OpticalPhoton::OpticalPhotonDefinition();
+
 	G4Electron::ElectronDefinition();
 	G4Positron::PositronDefinition();
+
 	G4Proton::ProtonDefinition();
+	G4AntiProton::AntiProtonDefinition();
 }
 
 void MyPhysicsList::ConstructProcess()
 {
-	// Define only the transportation process; no interactions yet!
 	AddTransportation();
+	// Include electromagnetic interactions
+//	myPhysicsListEM->ConstructProcess();
 }
 
 void MyPhysicsList::SetCuts()

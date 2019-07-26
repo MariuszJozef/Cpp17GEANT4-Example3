@@ -29,7 +29,9 @@ int main(int argc, char** argv)
 	runManager->SetUserInitialization(myPhysicsList.get());
 
 	std::unique_ptr<G4VUserPrimaryGeneratorAction> myPrimaryGeneratorAction
-	{std::make_unique<MyPrimaryGeneratorAction>()};
+	{std::make_unique<MyPrimaryGeneratorAction>
+		(myDetectorConstruction->GetHalfLabSize())};
+//	{std::make_unique<MyPrimaryGeneratorAction>()};
 	runManager->SetUserAction(myPrimaryGeneratorAction.get());
 
 	std::unique_ptr<G4VisManager> visManager {std::make_unique<G4VisExecutive>()};

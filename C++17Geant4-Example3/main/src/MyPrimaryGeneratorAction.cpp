@@ -8,11 +8,14 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
-MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
+MyPrimaryGeneratorAction::MyPrimaryGeneratorAction(G4ThreeVector halfLabSize)
 :
-particleGun{std::make_unique<G4ParticleGun>(1)}
+particleGun{std::make_unique<G4ParticleGun>(1)},
+halfLabSize{halfLabSize},
+gunEnergy{25*MeV},
+gunPosition{G4ThreeVector(0, 0, -halfLabSize.z())}
 {
-	G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+	G4ParticleTable *particleTable {G4ParticleTable::GetParticleTable()};
 	G4String particleName;
 
 	geantino = particleTable->FindParticle(particleName="geantino");
@@ -20,6 +23,13 @@ particleGun{std::make_unique<G4ParticleGun>(1)}
 	positron = particleTable->FindParticle(particleName="e+");
 	gamma = particleTable->FindParticle(particleName="gamma");
 	proton = particleTable->FindParticle(particleName="proton");
+	antiproton = particleTable->FindParticle(particleName="anti_proton");
+
+	G4ParticleDefinition *particle {electron};
+
+	particleGun->SetParticleDefinition(particle);
+	particleGun->SetParticleEnergy(gunEnergy);
+	particleGun->SetParticlePosition(gunPosition);
 }
 
 MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
@@ -29,15 +39,12 @@ MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
 
 void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-	G4ParticleDefinition* particle {electron};
-	particleGun->SetParticleDefinition(particle);
-
+	// If SetParticleMomentumDirection is placed in constructor,
+	// the directions will not be randomised.
 	particleGun->SetParticleMomentumDirection(
-					G4ThreeVector(1, G4UniformRand() - 0.5, G4UniformRand() - 0.5) );
-	particleGun->SetParticleEnergy(15*MeV);
-	// Be careful not to place gun outside of lab valume, cf. MyDetectorConstruction
-	particleGun->SetParticlePosition(G4ThreeVector(-5*cm, 0, 0));
-
+						G4ThreeVector( 0.25 * (G4UniformRand() - 0.5),
+									   0.25 * (G4UniformRand() - 0.5),
+									   1) );
 	particleGun->GeneratePrimaryVertex(anEvent);
 }
 
