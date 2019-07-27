@@ -4,3 +4,9 @@ The code of example GEANT4-MinimalExample3-TargetAndInteractions is refactored h
 Visually the example here only differs from GEANT4-MinimalExample3-TargetAndInteractions by two extra solids which have been added to exemplify wireframe display option. But the greatest improvement is in the use of C++17 throughtout and overall clean up of the-code.
 
 ![](gifs/C++17Geant4-Example3-1.gif)
+
+![](gifs/C++17Geant4-Example3-2.gif)
+
+![](gifs/C++17Geant4-Example3-3.gif)
+
+![](gifs/C++17Geant4-Example3-4.gif)
