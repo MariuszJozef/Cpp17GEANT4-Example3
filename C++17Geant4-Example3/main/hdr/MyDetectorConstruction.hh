@@ -12,11 +12,11 @@ class G4VisAttributes;
 #include "G4Box.hh"
 #include "G4Trd.hh"
 #include "G4Sphere.hh"
+#include "G4Torus.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-//#include "G4VisAttributes.hh"
 
 class MyDetectorConstruction: public G4VUserDetectorConstruction
 {
@@ -32,21 +32,26 @@ private:
 	std::unique_ptr<G4Box> solidLab {nullptr};
 	std::unique_ptr<G4Trd> solidTrapezoid {nullptr};
 	std::unique_ptr<G4Sphere> solidSphere {nullptr};
+	std::unique_ptr<G4Torus> solidTorus {nullptr};
 
 	std::unique_ptr<G4LogicalVolume> logicalLab {nullptr};
 	std::unique_ptr<G4LogicalVolume> logicalTrapezoid {nullptr};
 	std::unique_ptr<G4LogicalVolume> logicalSphere {nullptr};
+	std::unique_ptr<G4LogicalVolume> logicalTorus {nullptr};
 
 	std::unique_ptr<G4VPhysicalVolume> physicalLab {nullptr};
 	std::unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
 	std::unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
+	std::unique_ptr<G4VPhysicalVolume> physicalTorus {nullptr};
 
 	std::unique_ptr<G4Material> labMaterial {nullptr};
 	std::unique_ptr<G4Material> trapezoidMaterial {nullptr};
 	std::unique_ptr<G4Material> sphereMaterial {nullptr};
+	std::unique_ptr<G4Material> torusMaterial {nullptr};
 //	G4Material *labMaterial {nullptr};
 //	G4Material *trapezoidMaterial {nullptr};
 //	G4Material *sphereMaterial {nullptr};
+//	G4Material *torusMaterial {nullptr};
 
 	enum class Colour { yellow, orange, brown, cyan, magenta, invisible };
 	Colour colour { Colour::yellow };

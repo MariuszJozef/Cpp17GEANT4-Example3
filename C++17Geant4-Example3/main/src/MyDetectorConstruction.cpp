@@ -5,6 +5,7 @@
 #include "G4PVPlacement.hh"
 #include "G4NistManager.hh"
 #include "G4VisAttributes.hh"
+#include "G4RotationMatrix.hh"
 
 MyDetectorConstruction::MyDetectorConstruction()
 :
@@ -23,76 +24,10 @@ G4VPhysicalVolume* MyDetectorConstruction::Construct()
 
 void MyDetectorConstruction::DefineMaterials()
 {
-	G4NistManager *nist = G4NistManager::Instance();
-	G4Material *vacuum = nist->FindOrBuildMaterial("G4_Galactic");
-	G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
-	G4Material *G4H2Oliquid = nist->FindOrBuildMaterial("G4_WATER");
-	G4Material *G4H2Osteam = nist->FindOrBuildMaterial("G4_WATER_VAPOR");
-	G4Material *Pb = nist->FindOrBuildMaterial("G4_Pb");
-
-	G4String symbol;
-	G4double a, z, density;
-	G4int ncomponents;
-
-//	G4Material* Al = new G4Material("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3);
-//	G4Material *Ti = new G4Material("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3);
-//	G4Element* Cs = new G4Element("Cesium", symbol="Cs", z=55, a=132.9*g/mole);
-//	G4Element* I = new G4Element("Iodine", symbol="I", z=53, a=126.9*g/mole);
-//	G4Material* CsI = new G4Material("CsI", density=4.51*g/cm3, ncomponents=2);
-//	CsI->AddElement(I, .5);
-//	CsI->AddElement(Cs, .5);
-
-//	std::unique_ptr<G4Material> Al {std::make_unique<G4Material>("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3)};
-//	std::unique_ptr<G4Material> Ti {std::make_unique<G4Material>("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3)};
-//	std::unique_ptr<G4Element> Cs {std::make_unique<G4Element>("Cesium", symbol="Cs", z=55, a=132.9*g/mole)};
-//	std::unique_ptr<G4Element> I {std::make_unique<G4Element>("Iodine", symbol="I", z=53, a=126.9*g/mole)};
-//	std::unique_ptr<G4Material> CsI {std::make_unique<G4Material>("CsI", density=4.51*g/cm3, ncomponents=2)};
-//	CsI->AddElement(I.release(), 0.5);
-//	CsI->AddElement(Cs.release(), 0.5);
-
-//	auto Al {std::make_unique<G4Material>("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3)};
-//	auto Ti {std::make_unique<G4Material>("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3)};
-//	auto Cs {std::make_unique<G4Element>("Cesium", symbol="Cs", z=55, a=132.9*g/mole)};
-//	auto I {std::make_unique<G4Element>("Iodine", symbol="I", z=53, a=126.9*g/mole)};
-//	auto CsI {std::make_unique<G4Material>("CsI", density=4.51*g/cm3, ncomponents=2)};
-//	CsI->AddElement(I.get(), 0.5);
-//	CsI->AddElement(Cs.get(), 0.5);
-
-
-//	labMaterial = std::unique_ptr<G4Material>(air); // smart pointer not required
-//	labMaterial = air;
-//	trapezoidMaterial = Al.get();
-//	trapezoidMaterial = std::move(Al);
-//	sphereMaterial = G4H2Oliquid;
-
-//	labMaterial = air;
-//	trapezoidMaterial = Pb;
-//	sphereMaterial = vacuum;
-//
-//
-//	labMaterial = Al;
-//	trapezoidMaterial = Ti;
-//	sphereMaterial = CsI;
-//
-//	labMaterial = move(Al);
-//	trapezoidMaterial = move(Ti);
-//	sphereMaterial = move(CsI);
-//
 	labMaterial = ChooseMaterial(Material::G4H2Osteam);
 	trapezoidMaterial = ChooseMaterial(Material::CsI);
 	sphereMaterial = ChooseMaterial(Material::CsI);
-//
-//	labMaterial = Al.get();
-//	trapezoidMaterial = Ti.get();
-//	sphereMaterial = CsI.get();
-//
-//	labMaterial = Al.release();
-//	trapezoidMaterial = CsI.release();
-//	sphereMaterial = Ti.release();
-
-//	labMaterial = ChooseMaterial(Material::Al).release();
-//	trapezoidMaterial = ChooseMaterial(Material::CsI).release();
-//	sphereMaterial = ChooseMaterial(Material::Al).release();
+	torusMaterial = ChooseMaterial(Material::G4H2Oliquid);
 }
 
 std::unique_ptr<G4Material> MyDetectorConstruction::ChooseMaterial(Material material)
@@ -175,19 +110,20 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 					halfLabSize.x(), halfLabSize.y(), halfLabSize.z());
 
 	logicalLab = std::make_unique<G4LogicalVolume>
-					(solidLab.get(),   //raw pointer
-					labMaterial.get(), //raw pointer
+					(solidLab.get(),   // convert to raw pointer
+					labMaterial.get(), // convert to raw pointer
 					"Lab");
 
 	physicalLab = std::make_unique<G4PVPlacement>
-					(nullptr,	   	 //no rotation
-					G4ThreeVector(), //at (0,0,0)
-					logicalLab.get(),//raw pointer to logical volume
-					"Lab",           //name
-					nullptr,         //mother volume
-					false,           //no boolean operation
-					0); 	         //copy number};
+					(nullptr,	   	 // no rotation
+					G4ThreeVector(), // at (0,0,0)
+					logicalLab.get(),// raw pointer to logical volume
+					"Lab",           // name
+					nullptr,         // mother volume
+					false,           // no boolean operation
+					0); 	         // copy number};
 
+//	Uncomment below if you don't want to visualise the lab box
 //	logicalLab->SetVisAttributes(ChooseColour(Colour::invisible).release());
 
 
@@ -201,11 +137,11 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 						halfLengthZ);
 
 	logicalTrapezoid = std::make_unique<G4LogicalVolume>
-						(solidTrapezoid.get(), 		//raw pointer
-						trapezoidMaterial.get(),    //raw pointer
+						(solidTrapezoid.get(), 		// convert to raw pointer
+						trapezoidMaterial.get(),    // convert to raw pointer
 						"Trapezoid");
 
-//	Various G4PVPlacement constructors are available, e.g.
+//	Various G4PVPlacement constructors are available, e.g. uncomment #1 or #2 (not both)
 //	1. This constructor uses physical mother volume:
 //	physicalTrapezoid = std::make_unique<G4PVPlacement>
 //						(nullptr,				// no rotation
@@ -221,7 +157,7 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 	physicalTrapezoid = std::make_unique<G4PVPlacement>
 						(nullptr,				// no rotation
 						G4ThreeVector(), 		// at (0, 0, 0)
-						logicalTrapezoid.get(),	// logical volume
+						logicalTrapezoid.get(),	// convert to raw pointer
 						"Trapezoid",     		// name
 						logicalLab.get(), 		// logical mother volume
 						false,           		// no boolean operations
@@ -234,7 +170,7 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 
 
 	solidSphere = std::make_unique<G4Sphere>
-						("Sphere",
+						("Sphere",	   // name
 						0, 			   // innerRadius,
 						2.5*cm,		   // outerRadius,
 						0*deg,         // Starting phi
@@ -243,18 +179,18 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 						180*deg);      // Delta theta
 
 	logicalSphere = std::make_unique<G4LogicalVolume>
-						(solidSphere.get(),
-						sphereMaterial.get(),
+						(solidSphere.get(),		// convert to raw pointer
+						sphereMaterial.get(),	// convert to raw pointer
 						"Sphere");
 
-//	Various G4PVPlacement constructors are available, e.g.
+//	Various G4PVPlacement constructors are available, e.g. uncomment #1 or #2 (not both)
 //	1. This constructor uses physical mother volume:
 //	physicalSphere = std::make_unique<G4PVPlacement>
 //						(nullptr,               // no rotation
 //						G4ThreeVector(), 		// at (0, 0, 0)
 //						"Sphere",      			// its name
-//						logicalSphere.get(), 	// its logical volume
-//						physicalTrapezoid.get(),// physical mother volume
+//						logicalSphere.get(), 	// convert to raw pointer
+//						physicalTrapezoid.get(),// NB: NOT physicalLab for mother volume
 //						false,           		// no boolean operations
 //						0,               		// copy number
 //						checkOverlaps); 		// checking overlaps
@@ -263,16 +199,48 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 	physicalSphere = std::make_unique<G4PVPlacement>
 						(nullptr,               // no rotation
 						G4ThreeVector(),		// at (0, 0, 0)
-						logicalSphere.get(), 	// its logical volume
+						logicalSphere.get(), 	// convert to raw pointer
 						"Sphere",      			// its name
-						logicalTrapezoid.get(), // logical mother volume
+						logicalTrapezoid.get(), // NB: NOT logicalLab for mother volume
 						false,           		// no boolean operations
-						0,               		// copy number
+						0,               		// copy number 0
 						checkOverlaps); 		// checking overlaps
 
 //	The SetVisAttributes method accepts a raw pointer and takes ownership of it,
 //	hence must .release() the uniquie_ptr returned by ChooseColour
-	logicalSphere->SetVisAttributes(ChooseColour(Colour::orange, Texture::solid).release());
+	logicalSphere->SetVisAttributes(ChooseColour(Colour::orange, Texture::wireframe).release());
+
+
+	G4double radius1min {1.25*cm}, radius1max {2*cm}, radius2 {4*cm};
+	G4double angle1 {60*deg}, angle2 {2.5*rad};
+	solidTorus = std::make_unique<G4Torus>
+							("Torus",
+							radius1min, radius1max,
+							radius2,
+							angle1, angle2);
+
+	logicalTorus = std::make_unique<G4LogicalVolume>
+							(solidTorus.get(),		// convert to raw pointer
+							torusMaterial.get(),	// convert to raw pointer
+							"Torus");
+
+	std::unique_ptr<G4RotationMatrix> rotation {std::make_unique<G4RotationMatrix>()};
+//	G4RotationMatrix *rotation = new G4RotationMatrix();
+	rotation->rotateX(150*deg);
+	rotation->rotateY(0*deg);
+	rotation->rotateZ(5*deg);
+	physicalTorus = std::make_unique<G4PVPlacement>
+							(rotation.release(),        // give up ownership of rotation pointer
+//							(rotation,			        // raw pointer
+							G4ThreeVector(14*cm, 9*cm, 6*cm), // at (x,y,z)
+							logicalTorus.get(),			// its logical volume
+							"Torus",		   			// its name
+							logicalLab.get(),    		// logical mother volume
+							false,           			// no boolean operations
+							0,               			// copy number
+							checkOverlaps); 			// checking overlaps
+
+	logicalTorus->SetVisAttributes(ChooseColour(Colour::magenta, Texture::solid).release());
 
 	return physicalLab.get();
 }

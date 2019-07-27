@@ -1,12 +1,11 @@
 #include "MyPhysicsList.hh"
-//#include "MyPhysicsListEM.hh"
+#include "MyPhysicsListEM.hh"
 #include "G4ParticleTypes.hh"
 
 MyPhysicsList::MyPhysicsList()
-: G4VModularPhysicsList()
-//  myPhysicsListEM(0)
+: G4VModularPhysicsList(),
+  myPhysicsListEM(std::make_unique<MyPhysicsListEM>())
 {
-//	myPhysicsListEM = new MyPhysicsListEM();
 	SetCutsWithDefault();
 	SetVerboseLevel(0);
 }
@@ -29,7 +28,7 @@ void MyPhysicsList::ConstructProcess()
 {
 	AddTransportation();
 	// Include electromagnetic interactions
-//	myPhysicsListEM->ConstructProcess();
+	myPhysicsListEM->ConstructProcess();
 }
 
 void MyPhysicsList::SetCuts()

@@ -5,7 +5,7 @@
 # Specify view angle:
 /vis/viewer/set/viewpointThetaPhi 70. 150.
 # Specify zoom value:
-/vis/viewer/zoom 1
+/vis/viewer/zoom 1.3
 
 /vis/scene/add/scale   # Simple scale line
 /vis/scene/add/axes    # Simple axes: x=red, y=green, z=blue.
