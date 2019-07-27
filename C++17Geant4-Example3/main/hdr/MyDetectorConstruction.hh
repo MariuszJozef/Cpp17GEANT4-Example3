@@ -41,20 +41,25 @@ private:
 	std::unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
 	std::unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
 
-	G4Material *labMaterial = {nullptr};
-//	G4Material *trapezoidMaterial = nullptr;
+	std::unique_ptr<G4Material> labMaterial {nullptr};
 	std::unique_ptr<G4Material> trapezoidMaterial {nullptr};
-	G4Material *sphereMaterial {nullptr};
+	std::unique_ptr<G4Material> sphereMaterial {nullptr};
+//	G4Material *labMaterial {nullptr};
+//	G4Material *trapezoidMaterial {nullptr};
+//	G4Material *sphereMaterial {nullptr};
 
 	enum class Colour { yellow, orange, brown, cyan, magenta, invisible };
 	Colour colour { Colour::yellow };
 	enum class Texture { wireframe, solid };
 	Texture texture { Texture::solid };
+	enum class Material { Al, Ti, CsI, vacuum, air, G4H2Oliquid, G4H2Osteam, Pb };
+	Material material { Material::vacuum };
 
 private:
 	void DefineMaterials();
 	G4VPhysicalVolume* ConstructDetector();
-	std::unique_ptr<G4VisAttributes> ChooseColour(Colour colour, Texture texture);
+	std::unique_ptr<G4VisAttributes> ChooseColour(Colour colour, Texture texture = Texture::solid);
+	std::unique_ptr<G4Material> ChooseMaterial(Material material);
 };
 
 #endif /* HDR_MYDETECTORCONSTRUCTION_HH_ */

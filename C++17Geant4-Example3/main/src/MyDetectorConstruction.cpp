@@ -35,82 +35,136 @@ void MyDetectorConstruction::DefineMaterials()
 	G4int ncomponents;
 
 //	G4Material* Al = new G4Material("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3);
-//	std::unique_ptr<G4Material> Al {std::make_unique<G4Material>("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3)};
-	auto Al {std::make_unique<G4Material>("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3)};
+//	G4Material *Ti = new G4Material("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3);
+//	G4Element* Cs = new G4Element("Cesium", symbol="Cs", z=55, a=132.9*g/mole);
+//	G4Element* I = new G4Element("Iodine", symbol="I", z=53, a=126.9*g/mole);
+//	G4Material* CsI = new G4Material("CsI", density=4.51*g/cm3, ncomponents=2);
+//	CsI->AddElement(I, .5);
+//	CsI->AddElement(Cs, .5);
 
-	G4Element* Cs = new G4Element("Cesium", symbol="Cs", z=55, a=132.9*g/mole);
-	G4Element* I = new G4Element("Iodine", symbol="I", z=53, a=126.9*g/mole);
-	G4Material* CsI = new G4Material("CsI", density=4.51*g/cm3, ncomponents=2);
-	CsI->AddElement(I, .5);
-	CsI->AddElement(Cs, .5);
+//	std::unique_ptr<G4Material> Al {std::make_unique<G4Material>("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3)};
+//	std::unique_ptr<G4Material> Ti {std::make_unique<G4Material>("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3)};
+//	std::unique_ptr<G4Element> Cs {std::make_unique<G4Element>("Cesium", symbol="Cs", z=55, a=132.9*g/mole)};
+//	std::unique_ptr<G4Element> I {std::make_unique<G4Element>("Iodine", symbol="I", z=53, a=126.9*g/mole)};
+//	std::unique_ptr<G4Material> CsI {std::make_unique<G4Material>("CsI", density=4.51*g/cm3, ncomponents=2)};
+//	CsI->AddElement(I.release(), 0.5);
+//	CsI->AddElement(Cs.release(), 0.5);
+
+//	auto Al {std::make_unique<G4Material>("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3)};
+//	auto Ti {std::make_unique<G4Material>("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3)};
+//	auto Cs {std::make_unique<G4Element>("Cesium", symbol="Cs", z=55, a=132.9*g/mole)};
+//	auto I {std::make_unique<G4Element>("Iodine", symbol="I", z=53, a=126.9*g/mole)};
+//	auto CsI {std::make_unique<G4Material>("CsI", density=4.51*g/cm3, ncomponents=2)};
+//	CsI->AddElement(I.get(), 0.5);
+//	CsI->AddElement(Cs.get(), 0.5);
+
 
 //	labMaterial = std::unique_ptr<G4Material>(air); // smart pointer not required
-	labMaterial = air;
+//	labMaterial = air;
 //	trapezoidMaterial = Al.get();
-	trapezoidMaterial = std::move(Al);
-	sphereMaterial = G4H2Oliquid;
+//	trapezoidMaterial = std::move(Al);
+//	sphereMaterial = G4H2Oliquid;
+
+//	labMaterial = air;
+//	trapezoidMaterial = Pb;
+//	sphereMaterial = vacuum;
+//
+//
+//	labMaterial = Al;
+//	trapezoidMaterial = Ti;
+//	sphereMaterial = CsI;
+//
+//	labMaterial = move(Al);
+//	trapezoidMaterial = move(Ti);
+//	sphereMaterial = move(CsI);
+//
+	labMaterial = ChooseMaterial(Material::G4H2Osteam);
+	trapezoidMaterial = ChooseMaterial(Material::CsI);
+	sphereMaterial = ChooseMaterial(Material::CsI);
+//
+//	labMaterial = Al.get();
+//	trapezoidMaterial = Ti.get();
+//	sphereMaterial = CsI.get();
+//
+//	labMaterial = Al.release();
+//	trapezoidMaterial = CsI.release();
+//	sphereMaterial = Ti.release();
+
+//	labMaterial = ChooseMaterial(Material::Al).release();
+//	trapezoidMaterial = ChooseMaterial(Material::CsI).release();
+//	sphereMaterial = ChooseMaterial(Material::Al).release();
 }
 
-std::unique_ptr<G4VisAttributes> MyDetectorConstruction::
-						ChooseColour(Colour colour, Texture texture = Texture::solid)
+std::unique_ptr<G4Material> MyDetectorConstruction::ChooseMaterial(Material material)
 {
-	G4double opacity {0.4};
-	G4bool isVisible {true};
-	std::unique_ptr<G4VisAttributes> chosenColour;
+	G4NistManager *nist = G4NistManager::Instance();
+	G4String symbol;
+	G4double a, z, density;
+	G4int ncomponents;
+	std::unique_ptr<G4Material> chosenMaterial;
 
-	switch (colour)
+	switch (material)
 	{
-		case Colour::yellow:
+		case Material::Al:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 0, opacity));
+			chosenMaterial = std::make_unique<G4Material>
+								("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3);
 			break;
 		}
-		case Colour::orange:
+		case Material::Ti:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 0.65, 0, opacity));
+			chosenMaterial = std::make_unique<G4Material>
+								("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3);
 			break;
 		}
-		case Colour::brown:
+		case Material::CsI:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>
-								(G4Colour(0.545, 0.271, 0.075, opacity));
+			std::unique_ptr<G4Element> Cs
+			{std::make_unique<G4Element>("Cesium", symbol="Cs", z=55, a=132.9*g/mole)};
+
+			std::unique_ptr<G4Element> I
+			{std::make_unique<G4Element>("Iodine", symbol="I", z=53, a=126.9*g/mole)};
+
+			chosenMaterial =
+				std::make_unique<G4Material>("CsI", density=4.51*g/cm3, ncomponents=2);
+//			N.B. AddElement accepts a raw pointer and takes ownership of it,
+//			therefore use .release() NOT .get()
+			chosenMaterial->AddElement(I.release(), 0.5);
+			chosenMaterial->AddElement(Cs.release(), 0.5);
 			break;
 		}
-		case Colour::cyan:
+		case Material::vacuum:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(0, 1, 1, opacity));
+			G4Material *vacuum = nist->FindOrBuildMaterial("G4_Galactic");
+			chosenMaterial = std::unique_ptr<G4Material>(vacuum);
 			break;
 		}
-		case Colour::magenta:
+		case Material::air:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 0, 1, opacity));
+			G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
+			chosenMaterial = std::unique_ptr<G4Material>(air);
 			break;
 		}
-		case Colour::invisible:
+		case Material::G4H2Oliquid:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 1, opacity));
-			isVisible = false;
+			G4Material *G4H2Oliquid = nist->FindOrBuildMaterial("G4_WATER");
+			chosenMaterial = std::unique_ptr<G4Material>(G4H2Oliquid);
 			break;
 		}
-		default:
+		case Material::G4H2Osteam:
 		{
-			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 1, opacity));
+			G4Material *G4H2Osteam = nist->FindOrBuildMaterial("G4_WATER_VAPOR");
+			chosenMaterial = std::unique_ptr<G4Material>(G4H2Osteam);
+			break;
+		}
+		case Material::Pb:
+		{
+			G4Material *Pb = nist->FindOrBuildMaterial("G4_Pb");
+			chosenMaterial = std::unique_ptr<G4Material>(Pb);
 			break;
 		}
 	}
-
-	switch (texture)
-	{
-	case Texture::wireframe:
-		chosenColour->SetForceWireframe(true);
-		break;
-	case Texture::solid:
-		chosenColour->SetForceSolid(true);
-		break;
-	}
-
-	chosenColour->SetVisibility(isVisible);
-	return chosenColour;
+	return chosenMaterial;
 }
 
 G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
@@ -122,7 +176,7 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 
 	logicalLab = std::make_unique<G4LogicalVolume>
 					(solidLab.get(),   //raw pointer
-					labMaterial, 	   //raw pointer
+					labMaterial.get(), //raw pointer
 					"Lab");
 
 	physicalLab = std::make_unique<G4PVPlacement>
@@ -190,7 +244,7 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 
 	logicalSphere = std::make_unique<G4LogicalVolume>
 						(solidSphere.get(),
-						sphereMaterial,
+						sphereMaterial.get(),
 						"Sphere");
 
 //	Various G4PVPlacement constructors are available, e.g.
@@ -223,3 +277,64 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 	return physicalLab.get();
 }
 
+std::unique_ptr<G4VisAttributes> MyDetectorConstruction::
+						ChooseColour(Colour colour, Texture texture)
+{
+	G4double opacity {0.4};
+	G4bool isVisible {true};
+	std::unique_ptr<G4VisAttributes> chosenColour;
+
+	switch (colour)
+	{
+		case Colour::yellow:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 0, opacity));
+			break;
+		}
+		case Colour::orange:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 0.65, 0, opacity));
+			break;
+		}
+		case Colour::brown:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>
+								(G4Colour(0.545, 0.271, 0.075, opacity));
+			break;
+		}
+		case Colour::cyan:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(0, 1, 1, opacity));
+			break;
+		}
+		case Colour::magenta:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 0, 1, opacity));
+			break;
+		}
+		case Colour::invisible:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 1, opacity));
+			isVisible = false;
+			break;
+		}
+		default:
+		{
+			chosenColour = std::make_unique<G4VisAttributes>(G4Colour(1, 1, 1, opacity));
+			break;
+		}
+	}
+
+	switch (texture)
+	{
+	case Texture::wireframe:
+		chosenColour->SetForceWireframe(true);
+		break;
+	case Texture::solid:
+		chosenColour->SetForceSolid(true);
+		break;
+	}
+
+	chosenColour->SetVisibility(isVisible);
+	return chosenColour;
+}
