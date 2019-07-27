@@ -1,0 +1,5 @@
+# At Qt prompt: /control/execute run3.mac
+
+/gun/particle gamma
+/gun/energy 15 MeV
+/run/beamOn 50

@@ -16,10 +16,7 @@ trapezoidMaterial {ChooseMaterial(Material::CsI)},
 sphereMaterial {ChooseMaterial(Material::CsI)},
 torusMaterial {ChooseMaterial(Material::G4H2Oliquid)},
 coneMaterial {ChooseMaterial(Material::air)}
-{
-}
-
-MyDetectorConstruction::~MyDetectorConstruction() {}
+{}
 
 G4VPhysicalVolume* MyDetectorConstruction::Construct()
 {
@@ -39,13 +36,13 @@ unique_ptr<G4Material> MyDetectorConstruction::ChooseMaterial(Material material)
 		case Material::Al:
 		{
 			chosenMaterial = make_unique<G4Material>
-								("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3);
+							("Aluminum", z=13., a=26.98*g/mole, density=2.7*g/cm3);
 			break;
 		}
 		case Material::Ti:
 		{
 			chosenMaterial = make_unique<G4Material>
-								("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3);
+							("Titanium", z=22, a=47.867*g/mole, density=4.54*g/cm3);
 			break;
 		}
 		case Material::CsI:

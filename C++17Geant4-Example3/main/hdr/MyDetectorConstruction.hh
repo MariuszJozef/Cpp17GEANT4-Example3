@@ -25,7 +25,7 @@ class MyDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
 	MyDetectorConstruction();
-	virtual ~MyDetectorConstruction();
+	virtual ~MyDetectorConstruction() = default;
 	virtual G4VPhysicalVolume* Construct() override;
 	G4ThreeVector GetHalfLabSize() const { return halfLabSize; }
 

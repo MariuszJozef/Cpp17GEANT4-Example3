@@ -1,0 +1,5 @@
+# At Qt prompt: /control/execute run4.mac
+
+/gun/particle proton
+/gun/energy 85 MeV
+/run/beamOn 8

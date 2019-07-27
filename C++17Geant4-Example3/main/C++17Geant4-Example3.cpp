@@ -1,4 +1,7 @@
 #include <memory>
+using std::unique_ptr;
+using std::make_unique;
+
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
 #include "G4UIExecutive.hh"
@@ -13,7 +16,7 @@
 
 int main(int argc, char** argv)
 {
-	std::unique_ptr<G4RunManager> runManager {std::make_unique<G4RunManager>()};
+	unique_ptr<G4RunManager> runManager {make_unique<G4RunManager>()};
 
 	// Randomise the gun firing sequence, 
 	// otherwise each simulation run would be the same.
@@ -21,25 +24,24 @@ int main(int argc, char** argv)
 	G4long seed {time(nullptr)};
 	CLHEP::HepRandom::setTheSeed(seed);
 
-	std::unique_ptr<MyDetectorConstruction> myDetectorConstruction
-			{std::make_unique<MyDetectorConstruction>()};
+	unique_ptr<MyDetectorConstruction> myDetectorConstruction
+			{make_unique<MyDetectorConstruction>()};
 	runManager->SetUserInitialization(myDetectorConstruction.get());
 
-	std::unique_ptr<MyPhysicsList> myPhysicsList {std::make_unique<MyPhysicsList>()};
+	unique_ptr<MyPhysicsList> myPhysicsList {make_unique<MyPhysicsList>()};
 	runManager->SetUserInitialization(myPhysicsList.get());
 
-	std::unique_ptr<G4VUserPrimaryGeneratorAction> myPrimaryGeneratorAction
-	{std::make_unique<MyPrimaryGeneratorAction>
+	unique_ptr<G4VUserPrimaryGeneratorAction> myPrimaryGeneratorAction
+	{make_unique<MyPrimaryGeneratorAction>
 		(myDetectorConstruction->GetHalfLabSize())};
-//	{std::make_unique<MyPrimaryGeneratorAction>()};
 	runManager->SetUserAction(myPrimaryGeneratorAction.get());
 
-	std::unique_ptr<G4VisManager> visManager {std::make_unique<G4VisExecutive>()};
+	unique_ptr<G4VisManager> visManager {make_unique<G4VisExecutive>()};
 	visManager->Initialize();
 
 	G4UImanager *uiManager {G4UImanager::GetUIpointer()};
-	std::unique_ptr<G4UIExecutive> uiExecutive
-			{std::make_unique<G4UIExecutive>(argc, argv)};
+	unique_ptr<G4UIExecutive> uiExecutive
+			{make_unique<G4UIExecutive>(argc, argv)};
 
 	uiManager->ApplyCommand("/control/execute visualisation.macro");
 	uiExecutive->SessionStart();
