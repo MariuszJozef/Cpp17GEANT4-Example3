@@ -50,8 +50,8 @@ void MyPhysicsListEM::ConstructEM()
 //			ph->RegisterProcess(new G4ComptonScattering(),   particle);
 //			ph->RegisterProcess(new G4GammaConversion(),     particle);
 			ph->RegisterProcess(make_unique<G4PhotoElectricEffect>().get(),   particle);
-			ph->RegisterProcess(make_unique<G4ComptonScattering>().release(), particle);
-			ph->RegisterProcess(make_unique<G4GammaConversion>().release(),   particle);
+//			ph->RegisterProcess(make_unique<G4ComptonScattering>().release(), particle);
+//			ph->RegisterProcess(make_unique<G4GammaConversion>().release(),   particle);
 		}
 		else if (particleName == "opticalphoton")
 		{

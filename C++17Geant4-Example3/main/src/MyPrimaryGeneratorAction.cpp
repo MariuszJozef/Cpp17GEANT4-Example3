@@ -10,7 +10,7 @@
 
 MyPrimaryGeneratorAction::MyPrimaryGeneratorAction(G4ThreeVector halfLabSize)
 :
-particleGun{std::make_unique<G4ParticleGun>(1)},
+particleGun{make_unique<G4ParticleGun>(1)},
 halfLabSize{halfLabSize},
 gunEnergy{25*MeV},
 gunPosition{G4ThreeVector(0, 0, -halfLabSize.z())}

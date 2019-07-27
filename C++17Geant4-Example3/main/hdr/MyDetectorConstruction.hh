@@ -3,6 +3,8 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include <memory>
+using std::unique_ptr;
+using std::make_unique;
 
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -26,45 +28,51 @@ public:
 	virtual G4VPhysicalVolume* Construct() override;
 	G4ThreeVector GetHalfLabSize() const { return halfLabSize; }
 
-
 private:
 	G4ThreeVector halfLabSize;
-	std::unique_ptr<G4Box> solidLab {nullptr};
-	std::unique_ptr<G4Trd> solidTrapezoid {nullptr};
-	std::unique_ptr<G4Sphere> solidSphere {nullptr};
-	std::unique_ptr<G4Torus> solidTorus {nullptr};
-
-	std::unique_ptr<G4LogicalVolume> logicalLab {nullptr};
-	std::unique_ptr<G4LogicalVolume> logicalTrapezoid {nullptr};
-	std::unique_ptr<G4LogicalVolume> logicalSphere {nullptr};
-	std::unique_ptr<G4LogicalVolume> logicalTorus {nullptr};
-
-	std::unique_ptr<G4VPhysicalVolume> physicalLab {nullptr};
-	std::unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
-	std::unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
-	std::unique_ptr<G4VPhysicalVolume> physicalTorus {nullptr};
-
-	std::unique_ptr<G4Material> labMaterial {nullptr};
-	std::unique_ptr<G4Material> trapezoidMaterial {nullptr};
-	std::unique_ptr<G4Material> sphereMaterial {nullptr};
-	std::unique_ptr<G4Material> torusMaterial {nullptr};
+	unique_ptr<G4Material> labMaterial {nullptr};
+	unique_ptr<G4Material> trapezoidMaterial {nullptr};
+	unique_ptr<G4Material> sphereMaterial {nullptr};
+	unique_ptr<G4Material> torusMaterial {nullptr};
 //	G4Material *labMaterial {nullptr};
 //	G4Material *trapezoidMaterial {nullptr};
 //	G4Material *sphereMaterial {nullptr};
 //	G4Material *torusMaterial {nullptr};
 
+	unique_ptr<G4Box> solidLab {nullptr};
+	unique_ptr<G4Trd> solidTrapezoid {nullptr};
+	unique_ptr<G4Sphere> solidSphere {nullptr};
+	unique_ptr<G4Torus> solidTorus {nullptr};
+
+	unique_ptr<G4LogicalVolume> logicalLab {nullptr};
+	unique_ptr<G4LogicalVolume> logicalTrapezoid {nullptr};
+	unique_ptr<G4LogicalVolume> logicalSphere {nullptr};
+	unique_ptr<G4LogicalVolume> logicalTorus {nullptr};
+
+	unique_ptr<G4VPhysicalVolume> physicalLab {nullptr};
+	unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
+	unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
+	unique_ptr<G4VPhysicalVolume> physicalTorus {nullptr};
+
+	G4bool checkOverlaps {true};
+
 	enum class Colour { yellow, orange, brown, cyan, magenta, invisible };
 	Colour colour { Colour::yellow };
+
 	enum class Texture { wireframe, solid };
 	Texture texture { Texture::solid };
+
 	enum class Material { Al, Ti, CsI, vacuum, air, G4H2Oliquid, G4H2Osteam, Pb };
 	Material material { Material::vacuum };
 
 private:
-	void DefineMaterials();
 	G4VPhysicalVolume* ConstructDetector();
-	std::unique_ptr<G4VisAttributes> ChooseColour(Colour colour, Texture texture = Texture::solid);
-	std::unique_ptr<G4Material> ChooseMaterial(Material material);
+	unique_ptr<G4VPhysicalVolume> BuildLab();
+	unique_ptr<G4VPhysicalVolume> BuildTrapezoid();
+	unique_ptr<G4VPhysicalVolume> BuildSphere();
+	unique_ptr<G4VPhysicalVolume> BuildTorus();
+	unique_ptr<G4VisAttributes> ChooseColour(Colour colour, Texture texture = Texture::solid);
+	unique_ptr<G4Material> ChooseMaterial(Material material);
 };
 
 #endif /* HDR_MYDETECTORCONSTRUCTION_HH_ */

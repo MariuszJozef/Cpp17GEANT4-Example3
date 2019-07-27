@@ -4,6 +4,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ThreeVector.hh"
 #include <memory>
+using std::make_unique;
 
 class G4ParticleGun;
 class G4ParticleDefinition;
@@ -15,11 +16,14 @@ public:
 	MyPrimaryGeneratorAction(G4ThreeVector halfLabSize);
 	~MyPrimaryGeneratorAction();
 
-public:
 	void GeneratePrimaries(G4Event* anEvent);
 
 private:
 	std::unique_ptr<G4ParticleGun> particleGun {nullptr};
+	G4ThreeVector halfLabSize;
+	G4double gunEnergy;
+	G4ThreeVector gunPosition;
+
 	G4ParticleDefinition *geantino {nullptr}; // smart pointers not required
 	G4ParticleDefinition *electron {nullptr};
 	G4ParticleDefinition *positron {nullptr};
@@ -28,8 +32,6 @@ private:
 	G4ParticleDefinition *proton {nullptr};
 	G4ParticleDefinition *antiproton {nullptr};
 
-	G4double gunEnergy;
-	G4ThreeVector gunPosition, halfLabSize;
 };
 
 #endif /* MYPRIMARYGENERATORACTION_HH_ */
