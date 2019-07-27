@@ -14,7 +14,8 @@ halfLabSize {G4ThreeVector(20*cm, 21*cm, 22*cm)},
 labMaterial {ChooseMaterial(Material::G4H2Osteam)},
 trapezoidMaterial {ChooseMaterial(Material::CsI)},
 sphereMaterial {ChooseMaterial(Material::CsI)},
-torusMaterial {ChooseMaterial(Material::G4H2Oliquid)}
+torusMaterial {ChooseMaterial(Material::G4H2Oliquid)},
+coneMaterial {ChooseMaterial(Material::air)}
 {
 }
 
@@ -103,6 +104,7 @@ G4VPhysicalVolume* MyDetectorConstruction::ConstructDetector()
 	physicalTrapezoid = BuildTrapezoid();
 	physicalSphere = BuildSphere();
 	physicalTorus = BuildTorus();
+	physicalCone = BuildCone();
 
 	return physicalLab.get(); // convert unique pointer to raw pointer
 }
@@ -136,15 +138,15 @@ unique_ptr<G4VPhysicalVolume> MyDetectorConstruction::BuildTrapezoid()
 	G4double halfLengthY1 {6*cm}, halfLengthY2 {4*cm};
 	G4double halfLengthZ {3*cm};
 	solidTrapezoid = make_unique<G4Trd>
-						("Trapezoid",
-						halfLengthX1, halfLengthX2,
-						halfLengthY1, halfLengthY2,
-						halfLengthZ);
+								("Trapezoid",
+								halfLengthX1, halfLengthX2,
+								halfLengthY1, halfLengthY2,
+								halfLengthZ);
 
 	logicalTrapezoid = make_unique<G4LogicalVolume>
-						(solidTrapezoid.get(), 		// convert to raw pointer
-						trapezoidMaterial.get(),    // convert to raw pointer
-						"Trapezoid");
+									(solidTrapezoid.get(), 	 // convert to raw pointer
+									trapezoidMaterial.get(), // convert to raw pointer
+									"Trapezoid");
 
 //	The SetVisAttributes method accepts a raw pointer and takes ownership of it,
 //	hence must .release() the unique_ptr returned by ChooseColour
@@ -231,18 +233,15 @@ unique_ptr<G4VPhysicalVolume> MyDetectorConstruction::BuildTorus()
 							torusMaterial.get(),	// convert to raw pointer
 							"Torus");
 
-//	Caveat: For torus, selection of Texture::solid causing display blurring ... ???
-	logicalTorus->SetVisAttributes(ChooseColour(Colour::magenta, Texture::solid).release());
+	logicalTorus->SetVisAttributes(ChooseColour(Colour::magenta, Texture::wireframe).release());
 
 	unique_ptr<G4RotationMatrix> rotation {make_unique<G4RotationMatrix>()};
-//	G4RotationMatrix *rotation = new G4RotationMatrix();
 	rotation->rotateX(150*deg);
 	rotation->rotateY(0*deg);
 	rotation->rotateZ(5*deg);
 
 	return make_unique<G4PVPlacement>
 							(rotation.release(),        // give up ownership of rotation pointer
-//							(rotation,			        // raw pointer
 							G4ThreeVector(14*cm, 9*cm, 6*cm), // at (x,y,z)
 							logicalTorus.get(),			// its logical volume
 							"Torus",		   			// its name
@@ -250,6 +249,37 @@ unique_ptr<G4VPhysicalVolume> MyDetectorConstruction::BuildTorus()
 							false,           			// no boolean operations
 							0,               			// copy number
 							checkOverlaps); 			// checking overlaps
+}
+
+unique_ptr<G4VPhysicalVolume> MyDetectorConstruction::BuildCone()
+{
+	G4double radiusBaseInner {0.7*cm}, radiusBaseOuter {3.4*cm};
+	G4double radiusTopInner {1.7*cm}, radiusTopOuter {2*cm};
+	G4double halfHeightZ {2.5*cm};
+	G4double anglePhiStart {0}, anglePhiStop {235*deg};
+	solidCone = make_unique<G4Cons>
+							("Cone",
+							radiusBaseInner, radiusBaseOuter,
+							radiusTopInner, radiusTopOuter,
+							halfHeightZ,
+							anglePhiStart, anglePhiStop);
+
+	logicalCone = make_unique<G4LogicalVolume>
+								(solidCone.get(),	// convert to raw pointer
+								coneMaterial.get(),	// convert to raw pointer
+								"Cone");
+
+	logicalCone->SetVisAttributes(ChooseColour(Colour::cyan, Texture::solid).release());
+
+	return make_unique<G4PVPlacement>
+						(nullptr,				     // no rotation
+						G4ThreeVector(-13*cm, 0, 0), // at (x,y,z)
+						logicalCone.get(),			 // logical volume
+						"Cone",		      			 // name
+						logicalLab.get(),	    	 // logical mother volume
+						false,           			 // no boolean operations
+						0,               			 // copy number
+						checkOverlaps); 			 // checking overlaps
 }
 
 unique_ptr<G4VisAttributes> MyDetectorConstruction::

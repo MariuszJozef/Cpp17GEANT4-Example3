@@ -1,5 +1,6 @@
 #include "MyPhysicsListEM.hh"
 #include "globals.hh"
+using std::unique_ptr;
 using std::make_unique;
 
 MyPhysicsListEM::MyPhysicsListEM()
@@ -46,12 +47,9 @@ void MyPhysicsListEM::ConstructEM()
 
 		if (particleName == "gamma")
 		{
-//			ph->RegisterProcess(new G4PhotoElectricEffect(), particle);
-//			ph->RegisterProcess(new G4ComptonScattering(),   particle);
-//			ph->RegisterProcess(new G4GammaConversion(),     particle);
-			ph->RegisterProcess(make_unique<G4PhotoElectricEffect>().get(),   particle);
-//			ph->RegisterProcess(make_unique<G4ComptonScattering>().release(), particle);
-//			ph->RegisterProcess(make_unique<G4GammaConversion>().release(),   particle);
+			ph->RegisterProcess(make_unique<G4PhotoElectricEffect>().release(),   particle);
+			ph->RegisterProcess(make_unique<G4ComptonScattering>().release(), particle);
+			ph->RegisterProcess(make_unique<G4GammaConversion>().release(),   particle);
 		}
 		else if (particleName == "opticalphoton")
 		{
@@ -59,19 +57,12 @@ void MyPhysicsListEM::ConstructEM()
 		}
 		else if (particleName == "e-")
 		{
-//			ph->RegisterProcess(new G4eMultipleScattering(), particle);
-//			ph->RegisterProcess(new G4eIonisation(),           particle);
-//			ph->RegisterProcess(new G4eBremsstrahlung(),     particle);
 			ph->RegisterProcess(make_unique<G4eMultipleScattering>().release(), particle);
 			ph->RegisterProcess(make_unique<G4eIonisation>().release(), 		particle);
 			ph->RegisterProcess(make_unique<G4eBremsstrahlung>().release(), 	particle);
 		}
 		else if (particleName == "e+")
 		{
-//			ph->RegisterProcess(new G4eMultipleScattering(), particle);
-//			ph->RegisterProcess(new G4eIonisation(),           particle);
-//			ph->RegisterProcess(new G4eBremsstrahlung(),     particle);
-//			ph->RegisterProcess(new G4eplusAnnihilation(),   particle);
 			ph->RegisterProcess(make_unique<G4eMultipleScattering>().release(), particle);
 			ph->RegisterProcess(make_unique<G4eIonisation>().release(), 		particle);
 			ph->RegisterProcess(make_unique<G4eBremsstrahlung>().release(), 	particle);
@@ -79,29 +70,22 @@ void MyPhysicsListEM::ConstructEM()
 		}
 		else if ( particleName == "proton" )
 		{
-			ph->RegisterProcess(new G4hMultipleScattering(), particle);
-			ph->RegisterProcess(new G4hIonisation(),         particle);
-			ph->RegisterProcess(new G4hBremsstrahlung(),     particle);
-//			ph->RegisterProcess(make_unique<G4hMultipleScattering>().get(), particle);
-//			ph->RegisterProcess(make_unique<G4hIonisation>().get(), 		particle);
-//			ph->RegisterProcess(make_unique<G4hBremsstrahlung>().get(), 	particle);
+			ph->RegisterProcess(make_unique<G4hMultipleScattering>().release(), particle);
+			ph->RegisterProcess(make_unique<G4hIonisation>().release(), 		particle);
+			ph->RegisterProcess(make_unique<G4hBremsstrahlung>().release(), 	particle);
 		}
 		else if ( particleName == "anti_proton" )
 		{
-			ph->RegisterProcess(new G4hMultipleScattering(), particle);
-			ph->RegisterProcess(new G4hIonisation(),         particle);
-			ph->RegisterProcess(new G4hBremsstrahlung(),     particle);
-			ph->RegisterProcess(new G4hPairProduction(),     particle);
-//			ph->RegisterProcess(make_unique<G4hMultipleScattering>().get(), particle);
-//			ph->RegisterProcess(make_unique<G4hIonisation>().get(), 		particle);
-//			ph->RegisterProcess(make_unique<G4hBremsstrahlung>().get(), 	particle);
-//			ph->RegisterProcess(make_unique<G4hPairProduction>().get(), 	particle);
+			ph->RegisterProcess(make_unique<G4hMultipleScattering>().release(), particle);
+			ph->RegisterProcess(make_unique<G4hIonisation>().release(), 		particle);
+			ph->RegisterProcess(make_unique<G4hBremsstrahlung>().release(), 	particle);
+			ph->RegisterProcess(make_unique<G4hPairProduction>().release(), 	particle);
 		}
 	}
 
-	G4VAtomDeexcitation* de = new G4UAtomicDeexcitation();
-	de->SetFluo(true);
-	de->SetAuger(false);
-	de->SetPIXE(false);
-	G4LossTableManager::Instance()->SetAtomDeexcitation(de);
+	unique_ptr<G4VAtomDeexcitation> deexcitation {make_unique<G4UAtomicDeexcitation>()};
+	deexcitation->SetFluo(true);
+	deexcitation->SetAuger(false);
+	deexcitation->SetPIXE(false);
+	G4LossTableManager::Instance()->SetAtomDeexcitation(deexcitation.release());
 }

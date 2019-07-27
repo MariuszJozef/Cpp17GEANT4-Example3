@@ -15,6 +15,7 @@ class G4VisAttributes;
 #include "G4Trd.hh"
 #include "G4Sphere.hh"
 #include "G4Torus.hh"
+#include "G4Cons.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 #include "globals.hh"
@@ -34,25 +35,25 @@ private:
 	unique_ptr<G4Material> trapezoidMaterial {nullptr};
 	unique_ptr<G4Material> sphereMaterial {nullptr};
 	unique_ptr<G4Material> torusMaterial {nullptr};
-//	G4Material *labMaterial {nullptr};
-//	G4Material *trapezoidMaterial {nullptr};
-//	G4Material *sphereMaterial {nullptr};
-//	G4Material *torusMaterial {nullptr};
+	unique_ptr<G4Material> coneMaterial {nullptr};
 
 	unique_ptr<G4Box> solidLab {nullptr};
 	unique_ptr<G4Trd> solidTrapezoid {nullptr};
 	unique_ptr<G4Sphere> solidSphere {nullptr};
 	unique_ptr<G4Torus> solidTorus {nullptr};
+	unique_ptr<G4Cons> solidCone {nullptr};
 
 	unique_ptr<G4LogicalVolume> logicalLab {nullptr};
 	unique_ptr<G4LogicalVolume> logicalTrapezoid {nullptr};
 	unique_ptr<G4LogicalVolume> logicalSphere {nullptr};
 	unique_ptr<G4LogicalVolume> logicalTorus {nullptr};
+	unique_ptr<G4LogicalVolume> logicalCone {nullptr};
 
 	unique_ptr<G4VPhysicalVolume> physicalLab {nullptr};
 	unique_ptr<G4VPhysicalVolume> physicalTrapezoid {nullptr};
 	unique_ptr<G4VPhysicalVolume> physicalSphere {nullptr};
 	unique_ptr<G4VPhysicalVolume> physicalTorus {nullptr};
+	unique_ptr<G4VPhysicalVolume> physicalCone {nullptr};
 
 	G4bool checkOverlaps {true};
 
@@ -71,6 +72,7 @@ private:
 	unique_ptr<G4VPhysicalVolume> BuildTrapezoid();
 	unique_ptr<G4VPhysicalVolume> BuildSphere();
 	unique_ptr<G4VPhysicalVolume> BuildTorus();
+	unique_ptr<G4VPhysicalVolume> BuildCone();
 	unique_ptr<G4VisAttributes> ChooseColour(Colour colour, Texture texture = Texture::solid);
 	unique_ptr<G4Material> ChooseMaterial(Material material);
 };
