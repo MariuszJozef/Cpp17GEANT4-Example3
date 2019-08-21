@@ -11,4 +11,4 @@ Visually the example here differs from [GEANT4-MinimalExample3-TargetAndInteract
 
 ![](gifs/C++17Geant4-Example3-4.gif)
 
-This example here is further enhanced in [Cpp17GEANT4-Example4-AdjustableMaterialsAndLabels](https://github.com/MariuszJozef/Cpp17GEANT4-Example4-AdjustableMaterialsAndLabels) example.
+This see [Cpp17GEANT4-Example4-AdjustableMaterialsAndLabels](https://github.com/MariuszJozef/Cpp17GEANT4-Example4-AdjustableMaterialsAndLabels) for further substantial enhancements.
